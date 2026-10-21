@@ -1,0 +1,30 @@
+---
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ["--maxkb=1024"]
+      - id: check-yaml
+        args: ["--allow-multiple-documents"]
+  - repo: https://github.com/google/yamlfmt
+    rev: v0.21.0
+    hooks:
+      - id: yamlfmt
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.38.0
+    hooks:
+      - id: yamllint
+        args: [-c, .yamllint]
+  - repo: https://github.com/yannh/kubeconform
+    rev: v0.8.0
+    hooks:
+      - id: kubeconform
+        args: ["-strict", "-summary"]
+  - repo: https://github.com/stackrox/kube-linter
+    rev: 0.8.3
+    hooks:
+      - id: kube-linter
