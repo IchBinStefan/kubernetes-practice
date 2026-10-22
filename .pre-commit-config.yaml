@@ -19,12 +19,19 @@ repos:
     hooks:
       - id: yamllint
         args: [-c, .yamllint]
-  - repo: https://github.com/yannh/kubeconform
-    rev: v0.8.0
+  # kubeconform does not have a pre-commit hook
+  - repo: local
     hooks:
       - id: kubeconform
-        args: ["-strict", "-summary"]
+        name: kubeconform
+        entry: kubeconform
+        language: system
+        types: [yaml]
+        files: ^(examples|k8s|manifests)/
+        args:
+          - -summary
+          - -strict
   - repo: https://github.com/stackrox/kube-linter
-    rev: 0.8.3
+    rev: v0.8.3
     hooks:
       - id: kube-linter
