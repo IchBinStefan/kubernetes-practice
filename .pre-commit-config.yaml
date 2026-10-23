@@ -35,3 +35,4 @@ repos:
     rev: v0.8.3
     hooks:
       - id: kube-linter
+        exclude: (?x)^(examples/)
