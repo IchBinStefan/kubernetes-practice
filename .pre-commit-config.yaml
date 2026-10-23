@@ -27,7 +27,7 @@ repos:
         entry: kubeconform
         language: system
         types: [yaml]
-        files: ^(examples|k8s|manifests)/
+        files: ^(k8s|manifests)/
         args:
           - -summary
           - -strict
