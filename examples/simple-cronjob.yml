@@ -1,0 +1,33 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cronjob
+  namespace: practice
+  labels:
+    app: cron-task
+    environment: development
+spec:
+  schedule: "* * * * *"
+  concurrencyPolicy: Allow
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    metadata:
+      name: cron-task-job
+      labels:
+        app: cron-task
+        environment: development
+    spec:
+      template:
+        metadata:
+          name: cron-pod
+          labels:
+            app: cron-task
+            environment: development
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: task-container
+              image: ubuntu@sha256:c098726dd9b9733f3e885f8de0ef375206a311b0a317eadc40d347b1115fb944
+              command: ["/bin/sh", "-c", "echo \"Hello from CronJob's Job task!\""]
