@@ -1,0 +1,40 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: reader-job
+  namespace: practice
+  labels:
+    environment: development
+spec:
+  completions: 1
+  parallelism: 1
+  backoffLimit: 1
+  template:
+    metadata:
+      name: node-reader
+      labels:
+        environment: development
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: node-reader
+          image: node:26-slim@sha256:84f8a721625927ef3ccdf94509ecaea463a266d23f1b01a184061e84d3a6574d
+          env:
+            - name: TARGET_IP
+              value: "${TARGET_IP}"
+          command: ["node", "-e"]
+          args:
+            - |
+              const writer_ip = process.env.TARGET_IP || "127.0.0.1"
+              fetch(`http://${writer_ip}:3000/message`)
+                .then(r => r.json())
+                .then(d => console.log('Received Message:', d.message))
+                .catch(err => console.error('Failed', err.message))
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "100Mi"
+            limits:
+              cpu: "150m"
+              memory: "150Mi"

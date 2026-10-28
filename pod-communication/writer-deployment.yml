@@ -1,0 +1,39 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: writer-deployment
+  namespace: practice
+  labels:
+    environment: development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodejs-writer
+      environment: development
+  template:
+    metadata:
+      labels:
+        app: nodejs-writer
+        environment: development
+    spec:
+      containers:
+        - name: nodejs-writer
+          image: node:26-slim@sha256:84f8a721625927ef3ccdf94509ecaea463a266d23f1b01a184061e84d3a6574d
+          command: ["node", "-e"]
+          args:
+            - |
+              require('http').createServer((req, res) => {
+                if (req.url === '/message' && req.method === 'GET') {
+                  res.writeHead(200, { 'Content-Type': 'application/json' })
+                  res.end(JSON.stringify({ message: 'Cold tea is indeed nice.' }))
+                }
+              })
+              .listen(3000, '0.0.0.0', () => {
+                console.log(`Server running on port 3000`)
+              })
+          ports:
+            - name: http
+              protocol: TCP
+              containerPort: 3000
