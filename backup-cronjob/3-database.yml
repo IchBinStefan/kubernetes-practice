@@ -1,0 +1,53 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: database-set
+  namespace: database-practice
+  labels:
+    environment: development
+spec:
+  serviceName: database-service
+  replicas: 1
+  selector:
+    matchLabels:
+      database: postgresql
+      environment: development
+  template:
+    metadata:
+      name: postgresql-pod
+      labels:
+        database: postgresql
+        environment: development
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: postgresql
+          image: postgres:18-alpine@sha256:3b0ef735388b2cb097fc29b8bb421d86d57d0ddbe7aa1fbd6493e06d65028503
+          env:
+            - name: POSTGRES_DB
+              value: mock_database
+            - name: POSTGRES_USER
+              value: admin
+            - name: POSTGRES_PASSWORD
+              value: admin
+          ports:
+            - name: postgres-port
+              containerPort: 5432
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "500Mi"
+          volumeMounts:
+            - name: pg-data
+              mountPath: /var/lib/postgresql
+  volumeClaimTemplates:
+    - metadata:
+        name: pg-data
+        labels:
+          environment: development
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi

@@ -1,0 +1,59 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: database-migrations-job
+  namespace: database-practice
+  labels:
+    environment: development
+spec:
+  ttlSecondsAfterFinished: 3600
+  completions: 1
+  parallelism: 1
+  backoffLimit: 2
+  template:
+    metadata:
+      name: migrations-pod
+      labels:
+        database: postgres
+        environment: development
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: migrations
+          image: postgres:18-alpine@sha256:3b0ef735388b2cb097fc29b8bb421d86d57d0ddbe7aa1fbd6493e06d65028503
+          env:
+            - name: PGHOST
+              value: database-service
+            - name: PGPORT
+              value: "5432"
+            - name: PGDATABASE
+              value: mock_database
+            - name: PGUSER
+              value: admin
+            - name: PGPASSWORD
+              value: admin
+          command: ["/bin/sh", "-c"]
+          args:
+            - |-
+              echo "waiting for db"
+              until pg_isready; do
+                sleep 2
+              done
+
+              echo "running migrations"
+              psql << 'EOF'
+              CREATE TABLE IF NOT EXISTS users (
+                  id SERIAL PRIMARY KEY,
+                  name VARCHAR(50) NOT NULL,
+                  email VARCHAR(100) UNIQUE NOT NULL
+              );
+
+              INSERT INTO users (name, email) VALUES
+                  ('Alice Smith', 'alice@example.com'),
+                  ('Bob Jones', 'bob@example.com'),
+                  ('Charlie Brown', 'charlie@example.com')
+              ON CONFLICT (email) DO NOTHING;
+              EOF
+
+              echo "migrations done"

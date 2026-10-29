@@ -1,0 +1,62 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: database-backup-cronjob
+  namespace: database-practice
+  labels:
+    environment: development
+spec:
+  schedule: "* * * * *"
+  successfulJobsHistoryLimit: 5
+  failedJobsHistoryLimit: 5
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    metadata:
+      name: database-backup-job
+      labels:
+        environment: development
+    spec:
+      completions: 1
+      parallelism: 1
+      backoffLimit: 2
+      template:
+        metadata:
+          name: database-backup-pod
+          labels:
+            environment: development
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: backup
+              image: postgres:18-alpine@sha256:3b0ef735388b2cb097fc29b8bb421d86d57d0ddbe7aa1fbd6493e06d65028503
+              env:
+                - name: PGHOST
+                  value: database-service
+                - name: PGPORT
+                  value: "5432"
+                - name: PGDATABASE
+                  value: mock_database
+                - name: PGUSER
+                  value: admin
+                - name: PGPASSWORD
+                  value: admin
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  echo "ensure db is up"
+                  until pg_isready; do
+                    sleep 2
+                  done
+                  echo "running backup"
+                  TIMESTAMP=$(date +%Y%m%d)
+                  BACKUP_FILE="/backups/${TIMESTAMP}.dump"
+                  pg_dump > "$BACKUP_FILE"
+                  echo "backup done"
+                  echo "backup is saved inside at: $BACKUP_FILE"
+              volumeMounts:
+                - name: db-backup
+                  mountPath: /backups
+          volumes:
+            - name: db-backup
+              emptyDir: {}
