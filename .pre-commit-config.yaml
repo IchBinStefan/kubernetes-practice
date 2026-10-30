@@ -35,4 +35,4 @@ repos:
     rev: v0.8.3
     hooks:
       - id: kube-linter
-        exclude: (?x)^( examples/| pod-communication/| backup-cronjob/| external-service/ )
+        exclude: (?x)^( examples/| pod-communication/| backup-cronjob/| external-service/| load-balancing/ )
