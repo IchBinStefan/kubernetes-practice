@@ -1,0 +1,52 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-server-deployment
+  namespace: load-balancing-practice
+  labels:
+    environment: development
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      application: python-web-server
+      environment: development
+  template:
+    metadata:
+      name: web-server
+      labels:
+        application: python-web-server
+        environment: development
+    spec:
+      containers:
+        - name: python
+          image: python:3.15-slim@sha256:3053ea19f29305df68292b41291d621e0cbc9c1c826822c631713891ea0b64e9
+          command: ["python3", "-c"]
+          args:
+            - |
+              import json
+              import socket
+              from http.server import HTTPServer, BaseHTTPRequestHandler
+              pod_name = socket.gethostname()
+              class Handler(BaseHTTPRequestHandler):
+                  def do_GET(self):
+                      payload = { "pod": pod_name }
+                      body = (json.dumps(payload, indent=2) + "\n").encode("utf-8")
+                      self.send_response(200)
+                      self.send_header("Content-Type", "application/json")
+                      self.send_header("Content-Length", str(len(body)))
+                      self.end_headers()
+                      self.wfile.write(body)
+              server = HTTPServer(('0.0.0.0', 8000), Handler)
+              server.serve_forever()
+          ports:
+            - name: python-port
+              containerPort: 8000
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "50Mi"
+            limits:
+              cpu: "250m"
+              memory: "100Mi"
