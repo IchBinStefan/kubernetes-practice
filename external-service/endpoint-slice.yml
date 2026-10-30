@@ -1,0 +1,17 @@
+---
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: external-service-1
+  namespace: practice
+  labels:
+    kubernetes.io/service-name: external-service
+addressType: IPv4
+ports:
+  - name: external
+    protocol: TCP
+    appProtocol: http
+    port: 3000
+endpoints:
+  - addresses:
+      - "192.168.20.121"
