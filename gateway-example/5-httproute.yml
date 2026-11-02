@@ -1,0 +1,24 @@
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: http-route
+  namespace: gateway-practice
+  labels:
+    environment: development
+spec:
+  parentRefs:
+    - name: traefik-gateway
+      sectionName: http
+      kind: Gateway
+  hostnames:
+    - practice.test
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: caddy-service
+          namespace: gateway-practice
+          port: 80
