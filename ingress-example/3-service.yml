@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: caddy-service
+  namespace: ingress-example
+  labels:
+    environment: development
+spec:
+  selector:
+    application: caddy
+    environment: development
+  ports:
+    - name: service-http
+      protocol: TCP
+      port: 80
+      targetPort: http

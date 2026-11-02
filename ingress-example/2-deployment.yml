@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: caddy-deployment
+  namespace: ingress-example
+  labels:
+    application: caddy
+    environment: development
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      application: caddy
+      environment: development
+  template:
+    metadata:
+      name: caddy-pod
+      labels:
+        application: caddy
+        environment: development
+    spec:
+      containers:
+        - name: caddy-server
+          image: caddy:2.11-alpine@sha256:04913b1da43339a40ad1ea87827d70a576ac5aa6cf674c6e24fdca675887533a
+          ports:
+            - name: http
+              protocol: TCP
+              containerPort: 80
+          resources:
+            requests:
+              cpu: "150m"
+              memory: "250Mi"
