@@ -32,31 +32,37 @@ spec:
               image: postgres:18-alpine@sha256:3b0ef735388b2cb097fc29b8bb421d86d57d0ddbe7aa1fbd6493e06d65028503
               env:
                 - name: PGHOST
-                  value: database-service
+                  valueFrom:
+                    configMapKeyRef:
+                      name: database-config-map
+                      key: pg-host
                 - name: PGPORT
-                  value: "5432"
+                  valueFrom:
+                    configMapKeyRef:
+                      name: database-config-map
+                      key: pg-port
                 - name: PGDATABASE
-                  value: mock_database
+                  valueFrom:
+                    configMapKeyRef:
+                      name: database-config-map
+                      key: pg-db
                 - name: PGUSER
                   value: admin
                 - name: PGPASSWORD
                   value: admin
-              command: ["/bin/sh", "-c"]
-              args:
-                - |
-                  echo "ensure db is up"
-                  until pg_isready; do
-                    sleep 2
-                  done
-                  echo "running backup"
-                  TIMESTAMP=$(date +%Y%m%d)
-                  BACKUP_FILE="/backups/${TIMESTAMP}.dump"
-                  pg_dump > "$BACKUP_FILE"
-                  echo "backup done"
-                  echo "backup is saved inside at: $BACKUP_FILE"
+              command: ["/bin/sh", "/backup/backup.sh"]
               volumeMounts:
+                - name: backup-script
+                  mountPath: "/backup"
+                  readOnly: true
                 - name: db-backup
                   mountPath: /backups
           volumes:
+            - name: backup-script
+              configMap:
+                name: backup-config-map
+                items:
+                  - key: backup-script
+                    path: "backup.sh"
             - name: db-backup
               emptyDir: {}

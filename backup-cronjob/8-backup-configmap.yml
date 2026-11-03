@@ -1,0 +1,21 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backup-config-map
+  namespace: database-practice
+  labels:
+    environment: development
+immutable: true
+data:
+  backup-script: |-
+    echo "ensure db is up"
+    until pg_isready; do
+      sleep 2
+    done
+    echo "running backup"
+    TIMESTAMP=$(date +%Y%m%d)
+    BACKUP_FILE="/backups/${TIMESTAMP}.dump"
+    pg_dump > "$BACKUP_FILE"
+    echo "backup done"
+    echo "backup is saved inside at: $BACKUP_FILE"

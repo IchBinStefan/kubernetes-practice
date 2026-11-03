@@ -26,7 +26,10 @@ spec:
           image: postgres:18-alpine@sha256:3b0ef735388b2cb097fc29b8bb421d86d57d0ddbe7aa1fbd6493e06d65028503
           env:
             - name: POSTGRES_DB
-              value: mock_database
+              valueFrom:
+                configMapKeyRef:
+                  name: database-config-map
+                  key: pg-db
             - name: POSTGRES_USER
               value: admin
             - name: POSTGRES_PASSWORD
