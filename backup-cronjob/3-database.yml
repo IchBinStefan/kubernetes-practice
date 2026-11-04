@@ -31,9 +31,15 @@ spec:
                   name: database-config-map
                   key: pg-db
             - name: POSTGRES_USER
-              value: admin
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: user
             - name: POSTGRES_PASSWORD
-              value: admin
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: password
           ports:
             - name: postgres-port
               containerPort: 5432

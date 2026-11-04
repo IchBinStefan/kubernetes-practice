@@ -39,9 +39,15 @@ spec:
                   name: database-config-map
                   key: pg-db
             - name: PGUSER
-              value: admin
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: user
             - name: PGPASSWORD
-              value: admin
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: password
           command: ["/bin/sh", "/migrations/migrations.sh"]
           volumeMounts:
             - name: migrations-script
