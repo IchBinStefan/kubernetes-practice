@@ -71,4 +71,5 @@ spec:
                   - key: backup-script
                     path: "backup.sh"
             - name: db-backup
-              emptyDir: {}
+              persistentVolumeClaim:
+                claimName: backup-pvc

@@ -1,0 +1,21 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: backup-pvc
+  namespace: database-practice
+  labels:
+    application: database-backup
+    environment: development
+spec:
+  selector:
+    matchLabels:
+      application: database-backup
+      environment: development
+  storageClassName: ""
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
