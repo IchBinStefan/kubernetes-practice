@@ -1,0 +1,25 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+spec:
+  replicas: 3
+  template:
+    spec:
+      containers:
+        - name: nginx
+          image: nginx@sha256:4c41e2d0a3a55b325ed572cd0200bdb72af1433c3daa2bca6ef8eea68ce504a2
+          ports:
+            - name: http
+              protocol: TCP
+              containerPort: 80
+          volumeMounts:
+            - name: web-page-volume
+              mountPath: /usr/share/nginx/html/index.html
+              subPath: index.html
+              readOnly: true
+      volumes:
+        - name: web-page-volume
+          configMap:
+            name: web-page

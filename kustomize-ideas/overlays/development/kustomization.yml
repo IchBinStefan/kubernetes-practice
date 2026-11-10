@@ -1,0 +1,16 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - resources/namespace.yml
+  - ../../base
+namespace: kustomize-development
+namePrefix: dev-
+labels:
+  - pairs:
+      environment: development
+    includeSelectors: true
+configMapGenerator:
+  - name: web-page
+    files:
+      - config/index.html
