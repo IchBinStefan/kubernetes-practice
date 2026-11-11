@@ -10,15 +10,18 @@ repos:
         args: ["--maxkb=1024"]
       - id: check-yaml
         args: ["--allow-multiple-documents"]
+        exclude: '^.*/templates/.*\.yaml$'
   - repo: https://github.com/google/yamlfmt
     rev: v0.21.0
     hooks:
       - id: yamlfmt
+        exclude: '^.*/templates/.*\.yaml$'
   - repo: https://github.com/adrienverge/yamllint
     rev: v1.38.0
     hooks:
       - id: yamllint
         args: [-c, .yamllint]
+        exclude: '^.*/templates/.*\.yaml$'
   # kubeconform does not have a pre-commit hook
   - repo: local
     hooks:
@@ -36,3 +39,7 @@ repos:
     hooks:
       - id: kube-linter
         exclude: (?x)^( examples/| pod-communication/| backup-cronjob/| external-service/| load-balancing/| ingress-example/| gateway-example/| kustomize-ideas/| sailing-day/ )
+  - repo: https://github.com/gruntwork-io/pre-commit
+    rev: v0.1.30
+    hooks:
+      - id: helmlint
