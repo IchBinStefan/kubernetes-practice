@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-page-config-map
+  namespace: {{ include "sailing-day.fullname" . }}
+  labels:
+    {{- include "sailing-day.labels" . | nindent 4 }}
+data:
+  web-page: |-
+    {{- .Files.Get "files/index.html" | nindent 4 }}

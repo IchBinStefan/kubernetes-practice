@@ -1,0 +1,34 @@
+---
+application:
+  name: nginx-server
+environment: development
+replicaCount: 3
+image:
+  repository: nginx
+  tag: "1.31-alpine"
+  digest: "sha256:697b0b156c70b91130853fd0675c6be36665939d5f93dce2686be04b4c3f98a8"
+port:
+  - name: http
+    protocol: TCP
+    containerPort: 80
+resources:
+  requests:
+    cpu: "100m"
+    memory: "150Mi"
+volumeMounts:
+  - name: default-page
+    mountPath: /usr/share/nginx/html/index.html
+    subPath: index.html
+    readOnly: true
+volumes:
+  - name: default-page
+    configMap:
+      name: web-page-config-map
+      items:
+        - key: web-page
+          path: "index.html"
+servicePort:
+  - name: service-http
+    protocol: TCP
+    port: 80
+    targetPort: 80

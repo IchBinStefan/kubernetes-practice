@@ -1,0 +1,6 @@
+Thank you for installing the NGINX Tzanca Uraganu page! 🌪️🎤
+
+Release: {{ .Release.Name }}
+Namespace: {{ include "sailing-day.fullname" . }}
+
+Keep in mind to port-forward the service using "kubectl port-forward" to access the web-page.
