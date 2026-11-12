@@ -2,6 +2,7 @@
 apiVersion: v2
 name: web-generator
 description: Generator for a Web Server default page.
+icon: https://helm.sh/img/helm.svg
 type: application
 version: 1.0.0
 appVersion: "1.0.0"
