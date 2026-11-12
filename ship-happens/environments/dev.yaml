@@ -1,0 +1,8 @@
+---
+# Configuration for development environment
+environment: development
+generator:
+  pvc:
+    storage: '250Mi'
+server:
+  replicaCount: 5

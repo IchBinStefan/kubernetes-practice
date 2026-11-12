@@ -1,0 +1,36 @@
+# Helmfile configuration
+# Documentation: https://helmfile.readthedocs.io/
+---
+environments:
+  dev:
+    values:
+      - environments/common.yaml
+      - environments/dev.yaml
+  prod:
+    values:
+      - environments/common.yaml
+      - environments/prod.yaml
+---
+helmDefaults:
+  createNamespace: true
+  cleanupOnFail: true
+  historyMax: 5
+  wait: true
+  timeout: 300
+---
+templates:
+  default: &default
+    missingFileHandler: Warn
+    values:
+      - 'values/{{`{{ .Release.Name }}`}}.yaml.gotmpl'
+releases:
+  - name: generator
+    namespace: "{{ .Environment.Name }}-ns"
+    chart: ./charts/generator
+    <<: *default
+  - name: server
+    namespace: "{{ .Environment.Name }}-ns"
+    chart: ./charts/server
+    needs:
+      - "{{ .Environment.Name }}-ns/generator"
+    <<: *default

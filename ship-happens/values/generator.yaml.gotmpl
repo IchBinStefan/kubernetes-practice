@@ -1,0 +1,6 @@
+# Values override for specific chart
+application:
+  name: {{ .Values.application.name }}
+environment: {{ .Values.environment }}
+pvc:
+  storage: {{ .Values.generator.pvc.storage }}

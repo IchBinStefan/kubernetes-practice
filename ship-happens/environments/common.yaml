@@ -1,0 +1,4 @@
+---
+# Common values used by all environments
+application:
+  name: nginx-server-helmfile
