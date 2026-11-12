@@ -1,0 +1,20 @@
+---
+application:
+  name: nginx-server
+environment: development
+volumeName: web-page-volume
+pvcName: shared-pvc
+replicaCount: 3
+image:
+  repository: nginx
+  tag: "1.31-alpine"
+  digest: "sha256:697b0b156c70b91130853fd0675c6be36665939d5f93dce2686be04b4c3f98a8"
+port:
+  - name: http
+    protocol: TCP
+    containerPort: 80
+servicePort:
+  - name: service-http
+    protocol: TCP
+    port: 80
+    targetPort: 80

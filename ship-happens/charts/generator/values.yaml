@@ -1,0 +1,19 @@
+---
+application:
+  name: nginx-server
+environment: development
+volumeName: web-page-volume
+pvcName: shared-pvc
+pvc:
+  storage: "100Mi"
+  accessModes:
+    - ReadWriteOnce
+job:
+  backoffLimit: 2
+  completions: 1
+  parallelism: 1
+  ttl: 300
+image:
+  repository: ubuntu
+  tag: 26.04
+  digest: sha256:157dc3d6e4a3e4f2c68d12df9df9ed6e808b59af6d4c3757b432b4f519916725

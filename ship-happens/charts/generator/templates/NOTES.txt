@@ -1,0 +1,3 @@
+Default Web HTML Page Generator for the NGIX Chart.
+
+The job is currently running and generating the index.html file.

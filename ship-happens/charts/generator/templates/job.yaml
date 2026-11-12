@@ -1,0 +1,38 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ include "generator.fullname" . }}-job"
+  labels:
+    {{- include "generator.labels" . | nindent 4 }}
+spec:
+  backoffLimit: {{ .Values.job.backoffLimit }}
+  completions: {{ .Values.job.completions }}
+  parallelism: {{ .Values.job.parallelism }}
+  ttlSecondsAfterFinished: {{ .Values.job.ttl }}
+  template:
+    metadata:
+      labels:
+        {{- include "generator.labels" . | nindent 8 }}
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: "{{ include "generator.fullname" . }}-container"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}@{{ .Values.image.digest }}"
+          command: ["/bin/sh", "-c"]
+          args:
+            - echo "$HTML_PAYLOAD" > /generator/index.html
+          env:
+            - name: HTML_PAYLOAD
+              value: {{ .Files.Get "files/index.html" | quote }}
+          resources:
+            requests:
+              cpu: "150m"
+              memory: "150Mi"
+          volumeMounts:
+            - name: {{ .Values.volumeName }}
+              mountPath: /generator
+      volumes:
+        - name: {{ .Values.volumeName }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.pvcName }}
