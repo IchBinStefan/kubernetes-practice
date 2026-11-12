@@ -38,7 +38,7 @@ repos:
     rev: v0.8.3
     hooks:
       - id: kube-linter
-        exclude: (?x)^( examples/| pod-communication/| backup-cronjob/| external-service/| load-balancing/| ingress-example/| gateway-example/| kustomize-ideas/| sailing-day/ )
+        exclude: (?x)^( examples/| pod-communication/| backup-cronjob/| external-service/| load-balancing/| ingress-example/| gateway-example/| kustomize-ideas/| sailing-day/| ship-happens/ )
   - repo: https://github.com/gruntwork-io/pre-commit
     rev: v0.1.30
     hooks:
